@@ -1,2 +1,2 @@
 # aura
-The core of A.U.R.A. = Artificial Ubiquitous Reality Analysis
+The paradigm of A.U.R.A. = Artificial Ubiquitous Reality Analysis
