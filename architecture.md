@@ -44,7 +44,7 @@ AURA-core is a deterministic engine that:
 - executes only what is allowed by those constraints.
 
 ### Implications
-- An external user can adopt AURA-core without depending on your accounts.
+- An external user can adopt AURA-core depending on his accounts.
 - AURA-core is compatible with multiple providers and cost models.
 - AURA-core can be used in both “economical” and “deep analysis” modes.
 
