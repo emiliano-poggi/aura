@@ -8,7 +8,7 @@ A.U.R.A. (Artificial Ubiquitous Reality Analysis) is a research technological fr
 This repository serves as the **primary reference hub** for the project. It contains:
 
 - The foundational [AUR vision document](./vision.md).
-- A minimal en-to-end working [AURA prototype](./prototype.md).
+- A minimal end-to-end working [AURA prototype model](./prototype.md).
 - The implementation-oriented [AURA architecture document](./architecture.md).
 
 ## Stream of Consciousness and A.U.R.A.
