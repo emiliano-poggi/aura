@@ -3,14 +3,13 @@
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
 ## Overview
-A.U.R.A. (Artificial Ubiquitous Reality Analysis) is a research framework designed to study how narrative structures, cognitive patterns, and models of reality emerge from interactions between humans Stream of Consciousness (SoC) and Large Language Models (LLMs), as summarized in the foundational [AUR vision document](./vision.md).
+A.U.R.A. (Artificial Ubiquitous Reality Analysis) is a research technological framework designed to study how narrative structures, cognitive patterns, and models of reality emerge from interactions between humans Stream of Consciousness (SoC) and Large Language Models (LLMs).
 
 This repository serves as the **primary reference hub** for the project. It contains:
 
-- The main research paper
-- Conceptual and methodological documentation  
-- The foundations of the AURA experimental framework
-- Pointers to the companion code and pipeline repositories  
+- The foundational [AUR vision document](./vision.md).
+- A minimal en-to-end working [AURA prototype](./prototype.md).
+- The implementation-oriented [AURA architecture document](./architecture.md).
 
 ## Stream of Consciousness and A.U.R.A.
 A.U.R.A. explores the Stream of Consciousness technique as a controlled stress-test environment for investigating:
