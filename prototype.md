@@ -1,6 +1,6 @@
 # A.U.R.A. — Core Prototype Specification
 **Artificial Ubiquitous Reality Analysis**  
-**Prototype v0.1 — End-to-End MVP**
+**Prototype v0.2 — End-to-End MVP**
 
 ---
 
@@ -48,21 +48,15 @@ The prototype does NOT aim to:
 
 ---
 
-## 4. Conceptual Model
+## 4. Adherence to the AUR Vision Document
 
-### 4.1 Narrative Modes
+### 4.1 Narrative Mode
+The prototype supports and allows prompting semantic and inference analysis over SoC text provided by the user.
+The LLM response is processed and reported as a cognitive engine answer to observe reconstruction of latent structures.
 
-The prototype supports two conceptual modes:
-
-- **Structured Stream of Consciousness**
-  - An underlying narrative may exist but is hidden.
-  - The system attempts to reconstruct latent structure.
-
-- **Unstructured Stream of Consciousness**
-  - No underlying narrative is assumed.
-  - The system observes whether and how structure is imposed.
-
-These modes influence prompts and interpretation, not pipeline mechanics.
+### 4.2 Pre-existing World vs Closed Micro-World
+The prototype supports and allows LLM constrainments by configuration.
+These configurations influence prompts and LLM response.
 
 ---
 
@@ -74,83 +68,7 @@ The prototype consists of:
 - A configuration-driven execution engine
 - A pluggable LLM abstraction layer
 - A minimal analytical pipeline
-- A structured output system
-
-All execution is **user-controlled**:
-- model choice
-- token limits
-- cost constraints
-- analysis depth
-
----
-
-## 6. Epics and User Stories
-
-### EPIC 1 — Project Scaffolding & Execution
-
-**Goal:** Provide a runnable, installable core engine.
-
-- **US1.1**: CLI entrypoint (`aura run <config.yaml>`)
-- **US1.2**: Standard folder and module structure
-- **US1.3**: Installable Python package (editable mode)
-
----
-
-### EPIC 2 — Experiment Configuration
-
-**Goal:** Enable declarative experiment definition.
-
-- **US2.1**: YAML-based experiment manifest
-- **US2.2**: Load narrative text from file
-- **US2.3**: Support structured vs unstructured SoC mode flag
-
----
-
-### EPIC 3 — LLM Orchestration
-
-**Goal:** Abstract LLM access and control costs.
-
-- **US3.1**: Provider-agnostic LLM interface
-- **US3.2**: API keys supplied via environment variables
-- **US3.3**: Token budget tracking and enforcement
-- **US3.4**: Mock provider for zero-cost development
-
----
-
-### EPIC 4 — Analytical Pipeline
-
-**Goal:** Produce layered analytical output.
-
-- **US4.1**: Surface analysis layer
-  - counts, fragmentation heuristics, basic metrics
-- **US4.2**: Semantic analysis layer
-  - themes, clusters, motifs (LLM-driven)
-- **US4.3**: Inference layer
-  - entities, implied events, causal assumptions
-
-Each layer produces **structured JSON output**.
-
----
-
-### EPIC 5 — Experiment Orchestration & Output
-
-**Goal:** Ensure reproducibility and traceability.
-
-- **US5.1**: Execute selected layers sequentially
-- **US5.2**: Persist outputs in a structured directory
-- **US5.3**: Generate experiment metadata
-- **US5.4**: Generate a human-readable experiment summary
-
----
-
-### EPIC 6 — Automation (Deferred)
-
-**Goal:** Enable CI-based execution.
-
-- **US6.1**: GitHub Action to run experiments
-- **US6.2**: Secure handling of secrets in CI
-
-(This epic is intentionally deferred until the prototype stabilizes.)
+- A structured output response
 
 ---
 
@@ -164,7 +82,7 @@ The prototype is considered complete when:
   ````
 * A narrative is loaded and analyzed.
 * At least one analytical layer runs end-to-end.
-* Outputs are written to disk.
+* Outputs are written to console (no data persisted on disk).
 * No API calls are required if mock mode is enabled.
 * The execution is documented and reproducible.
 
@@ -178,20 +96,3 @@ By completing this prototype, we expect to:
 * Observe initial LLM behavior under SoC constraints.
 * Identify architectural pressure points early.
 * Establish a concrete base for scientific discussion.
-
----
-
-## 9. Next Steps After Prototype
-
-After the prototype:
-
-* refine prompts and layers;
-* formalize metrics;
-* expand multi-model comparison;
-* stabilize `aura-core`;
-* introduce `aura-pipeline`.
-
----
-
-**Status:**
-This document reflects the agreed-upon scope and direction as of Prototype v0.1.
