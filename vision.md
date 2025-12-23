@@ -1,6 +1,6 @@
 # Artificial Ubiquitous Reality Analysis (AURA)
 
-## Vision Document v1.1
+## Vision Document v1.1.1
 
 ## Preface
 
@@ -13,8 +13,6 @@ Some concepts in this vision document are intentionally permissive or explorator
 The AURA vision adopts selected concepts from *Artificial Intelligence: A Modern Approach (AIMA)* as a normative vocabulary for reasoning about interpretation, uncertainty, and evaluation, without committing to agent-based internal architectures. Explicit AIMA parallels are discussed in **Appendix A**.
 
 ---
-
-## What Is AURA
 
 ## What Is AURA
 
@@ -43,8 +41,6 @@ The project adopts a **non-committal stance** with respect to meaning: a narrati
 This permissive stance is referred to as **Ubiquitous Reality**: SoC texts may underlie a narrative reality, but such a reality is accessible only through explicit interpretation by a reader—human or artificial—and remains fundamentally uncertain.
 
 ---
-
-## Dual Narrative Paths in SoC Texts
 
 ## Dual Narrative Paths in SoC Texts
 
@@ -171,8 +167,6 @@ The explicit definition of inputs and outputs reflects the task-environment spec
 
 ## Vision Scope and Future Artifacts
 
-## Vision Scope and Future Artifacts
-
 This vision document defines **why AURA exists**.
 
 It serves as the foundation for subsequent artifacts, including:
@@ -201,15 +195,14 @@ It is equally an inquiry into:
 
 ### A.1 Why AIMA Is Referenced
 
-AURA selectively adopts concepts from *Artificial Intelligence: A Modern Approach* as a **normative vocabulary**, not as an implementation blueprint.
+AURA selectively adopts concepts from *Artificial Intelligence: A Modern Approach (AIMA)* as a **normative vocabulary**, not as an implementation blueprint.
 
-From an AI perspective, extreme stream of consciousness texts can be treated as partially observable narrative environments, where the underlying world state—if any—is not directly accessible through the textual signal alone, a condition extensively discussed in _AIMA_.
+Various points are extensively discussed in AIMA and some AURA perspective is fully aligned with them:
 
-The distinction between hidden and emergent narrative paths mirrors the consideration of alternative environment hypotheses in abductive reasoning frameworks, as formalized in _AIMA_.
-
-When describing the AI as a critical reader, cognitive interpreter, or inferential agent, AURA adopts an as-if analytical stance like that used in agent-based modeling in _AIMA_, without asserting internal cognitive modularity.
-
-The dimensions observed by AURA are analogous to belief dynamics under uncertainty as treated in probabilistic reasoning frameworks in _AIMA_.
+- From an AI perspective, extreme stream of consciousness texts can be treated as partially observable narrative environments, where the underlying world state—if any—is not directly accessible through the textual signal alone.
+- The distinction between hidden and emergent narrative paths mirrors the consideration of alternative environment hypotheses in abductive reasoning frameworks.
+- When describing the AI as a critical reader, cognitive interpreter, or inferential agent, AURA adopts an as-if analytical stance like that used in agent-based modeling in _AIMA_, without asserting internal cognitive modularity.
+- The target dimensions observed by AURA are analogous to belief dynamics under uncertainty as treated in probabilistic reasoning frameworks in _AIMA_.
 
 ### A.2 Conceptual Mapping
 
