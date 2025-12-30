@@ -1,300 +1,505 @@
-# A.U.R.A. Architecture
-_Implementation-oriented notes that complement `vision.md` and `README.md` (focus: how we will operationalize the A.U.R.A. paradigm with code, APIs, and automation)._
+# AURA – Architecture v1.0.0
 
-## 1. Repository Topology (Ecosystem)
-A.U.R.A. is intentionally split into distinct repositories to separate concerns and licensing:
+This document defines the **architecture** of the **Artificial Ubiquitous Reality Analysis (AURA)** project.
+It translates the [AURA vision v1.*](vision.md) into a coherent set of structural decisions, execution boundaries, and conceptual contracts that guide implementation while deliberately avoiding premature formalization.
 
-### `aura` (research hub)
-- Contains the paper, conceptual framework, methodology, and research notes.
-- No executable code.
-- Licensed as **CC BY-NC-SA 4.0**.
-
-### `aura-core` (execution engine)
-- Contains the actual implementation of A.U.R.A.:
-  - CLI and/or library
-  - LLM provider adapters (OpenAI, Anthropic, local models, etc.)
-  - analysis modules (chunking, inference protocols, structured outputs)
-  - cost/budget enforcement
-  - caching and reproducibility mechanisms
-  - development simulation (mock mode)
-- Designed to run:
-  - locally (developer workstation)
-  - in CI (GitHub Actions / other CI engines)
-
-### `aura-pipeline` (automation layer)
-- Contains reusable workflows/templates that demonstrate:
-  - how to run A.U.R.A. in GitHub Actions
-  - how to pass user-defined cost/model constraints
-  - how to store outputs as artifacts or commit them back (optional)
-- Provides reference pipelines for narrative projects (`aura-*`) to adopt.
-
-### Narrative projects (`aura-*`)
-- Separate repos (or repo folders) containing manuscripts + configs + results.
-- They are treated as *datasets* and do not “cost” anything by themselves.
-- Costs happen only when `aura-core` runs analyses and calls external providers.
+The architecture is **procedural rather than agentic**, **explicit rather than implicit**, and **epistemically conservative by design**.
 
 ---
 
-## 2. Execution Model: User-Owned Costs, User-Owned Limits
-A core principle: **AURA-core does not “own” any usage rights.**
+## 1. Ecosystem (Repository Topology)
 
-AURA-core is a deterministic engine that:
-- receives **provider credentials** from the user (API key / token / endpoint),
-- receives **budget + analysis level** constraints (tokens, model, max cost),
-- executes only what is allowed by those constraints.
-
-### Implications
-- An external user can adopt AURA-core depending on his accounts.
-- AURA-core is compatible with multiple providers and cost models.
-- AURA-core can be used in both “economical” and “deep analysis” modes.
+AURA is structured as a **multi-repository ecosystem**.
+Each repository embodies a distinct epistemic and operational role. This separation is a **core architectural principle**, intended to preserve conceptual clarity, responsibility boundaries, and licensing intent.
 
 ---
 
-## 3. Configuration-Driven Architecture (`aura.yml`)
-Every narrative repo (or run) should be controllable via a configuration file, e.g. `aura.yml`.
+### `aura` — Research Hub (Conceptual Authority)
 
-### Recommended config sections
-- **provider**: selected vendor and model
-- **budget**: hard limits (tokens and/or max cost)
-- **analysis_profile**: “economical | standard | deep | custom”
-- **modes**: structured vs unstructured Stream of Consciousness experiments
-- **pipelines**: which steps are enabled/disabled
-- **caching**: reuse previous outputs if inputs unchanged
-- **outputs**: where to write JSON/Markdown and artifacts
+This repository serves as the **conceptual anchor** of the project.
 
-Example skeleton:
-```yaml
-provider:
-  name: openai              # openai | anthropic | local | custom
-  model: gpt-4.1-mini       # user-controlled
-budget:
-  max_total_usd: 2.00       # optional if price tables exist
-  max_input_tokens: 12000
-  max_output_tokens: 2000
-analysis_profile: economical # economical | standard | deep
-modes:
-  soc_paradigm: structured   # structured | unstructured
-pipelines:
-  enabled:
-    - ingest
-    - chunk
-    - infer_world_model
-    - narrative_reconstruction
-    - bias_probe
-caching:
-  enabled: true
-  strategy: content_hash
-outputs:
-  format: [json, md]
-  dir: analysis/
-````
+* Contains the vision document, conceptual framework, methodological principles, and research notes that define the scope and intent of AURA.
+* Contains **no executable code**, runtime dependencies, or operational logic.
+* Establishes the vocabulary, assumptions, and epistemic constraints that inform all other components.
+* Licensed under **CC BY-NC-SA 4.0** to promote academic sharing while preventing unrestricted commercial reuse.
+
+This repository is **authoritative but inert**: it constrains interpretation without performing it.
 
 ---
 
-## 4. Two Experimental Modes (Operationalized)
+### `aura-core` — Execution Engine (Interpretive Instrument)
 
-AURA focuses on two distinct SoC experimental paradigms, implemented as **explicit run modes**:
+This repository implements the **operational heart** of AURA.
 
-### Mode A — Structured SoC (Hidden Narrative)
+* Provides the only authorized mechanism for performing interpretation.
+* Exposes a CLI and/or library interface through which experiments are executed.
+* Implements cognitive engine adapters, including cloud-based, local, and mock engines.
+* Hosts analysis units, interpretive protocols, execution tracing, and cost enforcement.
+* Supports simulation and mock execution for development and pedagogical use.
 
-Assumption: there is an underlying narrative logic, hidden by fragmentation.
-
-AURA-core must:
-
-* infer candidate entities, events, causal relations
-* propose multiple competing reconstructions (N-best)
-* track uncertainty explicitly (confidence, alternative hypotheses)
-
-Outputs:
-
-* inferred timeline(s)
-* entity graph
-* “most likely” narrative reconstruction
-* ambiguity report (what cannot be resolved from text alone)
-
-### Mode B — Unstructured SoC (No Intended Narrative)
-
-Assumption: there is no underlying plot; the text is a pure mental flow.
-
-AURA-core must:
-
-* detect *pressure toward coherence* in model outputs (over-structuring bias)
-* record what structure the model “injects”
-* compare across models (bias fingerprinting)
-
-Outputs:
-
-* “imposed narrative” hypotheses + evidence snippets
-* bias report (teleology, causal completion, entity invention)
-* comparison matrix across providers/models
+All **cost-incurring, irreversible interpretive acts** occur exclusively within `aura-core`.
 
 ---
 
-## 5. Provider Adapter Layer (Multi-LLM Design)
+### `aura-experiments` — Experimental Datasets (Narrative Substrate)
 
-AURA-core should implement a stable internal interface, e.g.:
+This repository contains the **materials of inquiry**, not the act of inquiry.
 
-* `generate(prompt, settings) -> completion`
-* `structured_generate(schema, prompt, settings) -> json`
-* `embed(text) -> vector` (optional)
-* `estimate_cost(tokens_in, tokens_out, model) -> cost` (optional best-effort)
+* Stores narrative texts and experiment configurations.
+* Is treated strictly as a dataset repository.
+* Performs no execution and incurs no cost on its own.
+* Becomes meaningful only when consumed by `aura-core`.
 
-This allows:
-
-* swapping providers without changing core logic
-* running multi-model comparisons as first-class experiments
+It represents the **substrate of interpretation**, not interpretation itself.
 
 ---
 
-## 6. Cost, Budget, and Safety Controls (Hard Stops)
+### `aura-docker` — Encapsulated Runtime Environment
 
-AURA-core must enforce constraints **before** making a call and **during** pipelines.
+This repository standardizes **execution environments**.
 
-Recommended controls:
+* Provides container images bundling `aura-core` with baseline configuration.
+* May include offline or local LLM runtimes (e.g. Ollama) for demonstration or constrained execution.
+* Supports onboarding, workshops, and reproducible experimentation.
 
-* `max_calls_per_run`
-* `max_total_tokens_per_run`
-* `max_total_cost_usd` (when estimable)
-* `max_concurrency`
-* “deep steps” must be explicitly enabled (no silent premium usage)
-
-Behavior:
-
-* if the budget is exceeded, AURA-core stops and writes a partial results report.
+It defines **environmental assumptions**, not analytical semantics.
 
 ---
 
-## 7. Reproducibility: Logging, Versioning, and Deterministic Runs
+### `aura-pipeline` — Automation and Operational Pedagogy
 
-AURA experiments should be repeatable.
+This repository provides **reference automation**, not hidden logic.
 
-Minimum reproducibility metadata to store per run:
+* Contains reusable CI workflows and templates.
+* Demonstrates how to execute AURA responsibly in automated contexts.
+* Forces explicit declaration of constraints, engines, and outputs.
 
-* timestamp
-* git commit hash (narrative repo + aura-core repo if possible)
-* provider + model + model version (if available)
-* parameters: temperature/top_p/max_tokens
-* prompts/templates version IDs
-* input hashes (content hash per chunk)
-* caching hits/misses
-* token usage & estimated cost
-
-Store as:
-
-* `analysis/run.json` (machine-readable)
-* `analysis/run.md` (human summary)
+Pipelines are treated as **executable documentation** and serve an **operational pedagogical role**:
+they teach correct usage by constraining what execution allows, not by narrative explanation.
 
 ---
 
-## 8. Caching Strategy (Token-Saving by Design)
+### Architectural Invariants
 
-AURA-core should avoid re-calling providers for identical inputs.
+The following constraints apply across the ecosystem:
 
-Recommended approach:
-
-* compute content hash: `SHA256(normalized_text + prompt_template_id + model + settings)`
-* store the completion keyed by that hash
-* reuse results if the hash matches
-
-This is essential for:
-
-* iterative development
-* re-running pipelines in CI
-* long manuscripts with frequent small edits
+* Dependencies flow strictly downward: `aura → aura-core → aura-pipeline`.
+* No interpretation or model invocation occurs outside `aura-core`.
+* No cost-incurring execution is hidden or implicit.
+* Pipelines and datasets never redefine execution semantics.
 
 ---
 
-## 9. Development Simulation Mode (No-API / Low-API Workflows)
+## 2. Execution Model and Control Boundaries
 
-AURA-core must support a “simulation” mode to reduce token burn during development.
-
-### Option 1: Mock provider (recommended baseline)
-
-* return deterministic canned outputs
-* optionally use lightweight heuristics (regex/entity extraction) to emulate structure
-
-### Option 2: Local model fallback (optional)
-
-* use local LLMs (via Ollama/llama.cpp) for cheap iterations
-* reserve paid APIs for “deep analysis” runs
-
-### Option 3: Record/Replay
-
-* run once against real APIs
-* store raw responses
-* replay during development/tests
+Execution in AURA is treated as a **deliberate, parameterized interpretive act**.
+Nothing executes implicitly, automatically, or without explicit declaration.
 
 ---
 
-## 10. `aura-pipeline`: Reference GitHub Actions Patterns
+### 2.1 The Experiment as the Atomic Unit of Execution
 
-The pipeline repo should provide reusable workflow templates that:
+All execution in AURA occurs within the scope of an **Experiment**.
 
-* install `aura-core`
-* load `aura.yml` from the narrative repo
-* accept secrets for provider keys (`OPENAI_API_KEY`, etc.)
-* run selected AURA pipelines
-* publish artifacts: `analysis/*.json`, `analysis/*.md`
+An experiment is the smallest complete unit of execution and consists of:
 
-Suggested triggers:
+1. **Narrative Input**
+   A single narrative text that constitutes the object of interpretation.
+   It may be sourced from a local filesystem, the `aura-experiments` repository, or external sources via explicit adapters.
 
-* `workflow_dispatch` (manual run)
-* `push` on manuscript changes
-* scheduled runs (nightly) for longitudinal analysis
+2. **Execution Configuration**
+   A declarative specification of how the narrative is to be interpreted, including the selected cognitive engine, analysis definition, constraints, and output policy.
 
----
+3. **Environmental Context**
+   The runtime conditions under which execution occurs, such as local execution, CI, containerized environments, and available credentials.
 
-## 11. Suggested `aura-core` Implementation Language
-
-AURA-core should prioritize **Python** due to:
-
-* strongest ecosystem for NLP, embeddings, clustering, evaluation tooling
-* easy CLI packaging
-* straightforward CI integration
-* rapid prototyping for research-driven iteration
-
-(Other languages may exist at the edges: e.g., PowerShell for wrappers, TypeScript for web UI later, but the core engine is best in Python.)
+An experiment is always **explicitly defined** and never inferred from context.
 
 ---
 
-## 12. Minimal CLI Surface (First Practical Milestone)
+### 2.2 Cognitive Engines
 
-AURA-core should ship early with a small stable CLI:
+A **cognitive engine** defines how interpretation is carried out.
 
-* `aura analyse --config aura.yml`
-* `aura analyse --profile economical|standard|deep`
-* `aura compare --models gpt-4.1-mini,claude-haiku,...`
-* `aura cache purge`
-* `aura doctor` (validate config, provider, budgets, environment)
+Each engine specifies:
 
-This provides immediate usability and a foundation for richer pipelines.
+* how prompts are executed,
+* how cost is incurred and measured,
+* what determinism or replay guarantees may exist.
 
----
+Engines include:
 
-## 13. Output Contract (Stable Formats)
+* cloud-based LLMs,
+* local or offline models,
+* a mock engine that simulates execution without invoking models.
 
-To enable downstream automation, AURA-core should produce structured outputs with predictable schema.
-
-Minimum:
-
-* `analysis/results.json` (machine-readable)
-* `analysis/report.md` (human-readable)
-* optional: `analysis/graphs/*.json` (entity/event graph, timeline)
+Execution “modes” are therefore **engine properties**, not global switches.
 
 ---
 
-## 14. Practical Consequence: AURA as a Reusable Research Instrument
+### 2.3 Execution Responsibility
 
-With the above, A.U.R.A. becomes:
+`aura-core` is the **sole executor** of experiments.
 
-* a reproducible experimental framework
-* provider-agnostic (within adapter limits)
-* cost-controlled by design
-* suitable for open-source adoption (engine + pipelines + narrative datasets)
+It is responsible for:
 
-This architecture is intentionally modular so that future work can add:
+* validating experiment configuration,
+* enforcing declared constraints,
+* invoking the selected cognitive engine,
+* producing and recording outputs.
 
-* evaluation metrics (consistency, hallucination pressure, narrative recoverability)
-* visualization dashboards
-* multi-agent protocols (analyzer vs critic vs judge)
-* fine-tuning experiments (optional, later stage)
+No other component may perform interpretation.
+
+---
+
+### 2.4 Constraints as Experiment Properties
+
+Constraints are declared per experiment and enforced during execution.
+
+They include:
+
+* **Cost constraints**, such as token limits or monetary caps.
+* **Engine constraints**, which prevent accidental or implicit model usage.
+* **Reproducibility expectations**, which express intent but do not guarantee determinism.
+
+Constraints are treated as **hard boundaries**, not advisory hints.
+
+---
+
+### 2.5 Experiment Outputs
+
+Each experiment defines an explicit **output policy**.
+
+Outputs may be:
+
+* printed to standard output for exploratory use,
+* written to disk for inspection,
+* stored as CI artifacts,
+* committed back to a repository when explicitly enabled.
+
+There is no implicit persistence or side effect.
+
+---
+
+### 2.6 Control Boundaries
+
+The architecture explicitly forbids:
+
+* implicit execution without an experiment definition,
+* hidden or background model invocation,
+* unaccounted cost,
+* mutation of narrative inputs,
+* bypassing the experiment configuration layer.
+
+These prohibitions preserve interpretive accountability.
+
+---
+
+### 2.7 Relationship to Pipelines
+
+Pipelines **instantiate experiments** and materialize configuration choices.
+They do not introduce new semantics or analytical behavior.
+
+---
+
+### 2.8 Experiment Configuration Schema (Conceptual)
+
+The experiment configuration is a **single structured unit**, independent of format.
+
+* **`text`**
+  Identifies and locates the narrative input being analyzed.
+
+* **`llm`**
+  Declares the selected cognitive engine and its parameters.
+
+* **`analysis_profiles`**
+  Defines the analysis to be performed and its interpretive intent.
+
+* **`budget`**
+  Specifies non-negotiable execution limits.
+
+* **`priors`**
+  Declares baseline interpretive assumptions.
+
+* **`pipelines`**
+  Controls which execution steps are enabled or disabled.
+
+* **`outputs`**
+  Defines how results are emitted and persisted.
+
+This schema is **normative at the conceptual level**.
+
+---
+
+## 3. Analysis Units and Interpretive Protocols
+
+---
+
+### 3.1 Analysis as a First-Class Concept
+
+An **analysis** is a bounded interpretive procedure applied to a narrative input.
+
+Analyses are:
+
+* explicitly declared,
+* repeatable within declared limits,
+* non-mutating with respect to input text.
+
+They produce artifacts, not conclusions.
+
+---
+
+### 3.2 Analysis Units
+
+An **analysis unit** is the smallest indivisible interpretive component.
+
+Each unit:
+
+* consumes narrative input and configuration,
+* produces a structured result,
+* is executed by a cognitive engine,
+* maintains no hidden state across executions.
+
+---
+
+### 3.3 Interpretive Protocols
+
+An **interpretive protocol** defines how analysis units are orchestrated.
+
+It specifies:
+
+* execution order,
+* dependencies between units,
+* aggregation or transformation steps.
+
+Protocols describe **procedure**, not reasoning.
+
+---
+
+### 3.4 Composition of Analyses (v1.0)
+
+In architecture v1.0, each experiment defines **exactly one analysis profile**.
+
+That profile:
+
+* includes one interpretive protocol,
+* may contain multiple analysis units,
+* produces a single coherent result set.
+
+Comparative or alternative interpretations are expressed as **separate experiments**, not parallel profiles.
+
+---
+
+### 3.5 Non-Agent Assumption
+
+AURA explicitly rejects agent-based interpretation.
+
+There is:
+
+* no persistent memory,
+* no goal-seeking behavior,
+* no autonomous control flow,
+* no hidden internal narrative.
+
+All interpretation is externalized and inspectable.
+
+---
+
+### 3.6 Role of Cognitive Engines
+
+Cognitive engines execute analysis units but do not define protocol structure.
+They are interchangeable instruments, not epistemic authorities.
+
+---
+
+### 3.7 Analysis Results
+
+Results are structured artifacts tied to:
+
+* the analysis unit,
+* the protocol,
+* the experiment configuration.
+
+They are not treated as truth claims.
+
+---
+
+### 3.8 Constraints on Analysis
+
+Explicitly forbidden:
+
+* implicit chaining of analyses,
+* reliance on hidden state,
+* engine-driven control decisions,
+* unbounded or self-triggering loops.
+
+---
+
+### 3.9 Summary
+
+Interpretation in AURA is modular, procedural, and bounded.
+
+---
+
+### 3.10 Taxonomy of Analysis Types
+
+AURA recognizes the following non-exhaustive categories:
+
+* **Surfacing analyses**, which expose salient textual features descriptively.
+* **Semantic analyses**, which explore meaning relations and thematic structure.
+* **Inferential analyses**, which generate provisional hypotheses under assumptions.
+* **Comparative analyses**, which contrast outputs across experiments or engines.
+* **Reflective / meta-analyses**, which examine analysis outputs themselves.
+
+These categories guide design but do not constrain execution.
+
+---
+
+## 4. Reproducibility, Traceability, and Cost Accounting
+
+---
+
+### 4.1 Execution Trace
+
+Every experiment produces an **execution trace** capturing:
+
+* configuration,
+* selected engine,
+* analyses executed,
+* outputs produced,
+* cost incurred.
+
+---
+
+### 4.2 Raw vs Structured Outputs
+
+For each analysis unit:
+
+* **Raw output**
+  The direct textual response produced by the cognitive engine, preserved prior to processing.
+
+* **Structured output**
+  Representations derived from raw output for comparison or aggregation.
+
+Raw output is treated as an **epistemic artifact**, not a debug artifact.
+
+---
+
+### 4.3 Output Preservation Policy
+
+Experiments define how outputs are persisted.
+
+Architectural rule:
+AURA must be capable of preserving raw outputs, even when not persisted by default.
+
+---
+
+### 4.4 Traceability
+
+All outputs must be traceable to:
+
+* the analysis unit that produced them,
+* the experiment configuration,
+* the cognitive engine used.
+
+---
+
+### 4.5 Reproducibility
+
+Reproducibility is **declared**, not assumed.
+
+Actual replay depends on:
+
+* engine properties,
+* availability of cached artifacts,
+* preservation of raw outputs.
+
+---
+
+### 4.6 Cost Accounting
+
+All execution incurs **accounted cost**, including simulation.
+
+Cost is cumulative, visible, and enforced.
+
+---
+
+### 4.7 Architectural Guarantees
+
+* No execution without a trace.
+* No structured output without a raw origin.
+* No cost without accounting.
+
+---
+
+## 5. Evaluation, Measures, and Epistemic KPIs
+
+---
+
+### 5.1 Role of Evaluation
+
+Evaluation in AURA is comparative, descriptive, and epistemic.
+It does not validate correctness or truth.
+
+---
+
+### 5.2 Scope of Measures
+
+Measures operate on execution traces, outputs, and cost records.
+They are derived artifacts.
+
+---
+
+### 5.3 KPI Categories
+
+AURA recognizes:
+
+* **Stability KPIs**, describing output variance across runs.
+* **Sensitivity KPIs**, describing dependence on parameters or priors.
+* **Cost–output KPIs**, relating interpretive output to incurred cost.
+* **Structural KPIs**, characterizing abstraction and representation.
+* **Comparative KPIs**, contrasting outputs across experiments or engines.
+
+---
+
+### 5.3.1 Illustrative KPI Examples (Non-Normative)
+
+Examples include:
+
+* similarity or divergence across repeated executions,
+* impact of changing priors or engines,
+* cost per unit of raw or structured output,
+* ratio between raw and structured representations.
+
+These examples are illustrative, not prescriptive.
+
+---
+
+### 5.4 KPI Configuration
+
+KPIs are explicitly configured, computed post-execution, and forbidden from invoking cognitive engines.
+
+---
+
+### 5.5 Constraints
+
+Disallowed:
+
+* KPIs asserting semantic correctness,
+* hidden evaluation logic,
+* mutation of experiment results.
+
+---
+
+### 5.6 Summary
+
+KPIs describe interpretation; they do not judge it.
+
+---
+
+## 6. Evolution and Versioning (Non-Normative)
+
+This document defines **AURA Architecture v1.0** at a conceptual level.
+
+Future extensions will be introduced through **minor version updates**, informed by implementation experience.
+No forward-compatibility guarantees are assumed.
